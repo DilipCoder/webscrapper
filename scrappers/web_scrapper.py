@@ -2,19 +2,19 @@ from typing import Optional, List
 import asyncio
 from decorators.retry_on_failure import retry_on_failure
 from repositories.repository import Repository
-from notifications.notification_strategy import NotificationStrategy
 from scrappers.scrapper_strategy import ScrapperStrategy
 from scrappers.scrapping_tool import ScrappingTool
 from utils.logger import logger
 from models.product_model import Product
+from notifications.notification_manager import NotificationManager
 
 class WebScrapper:
-    def __init__(self, base_url: str, repository: Repository, notification: NotificationStrategy, scrapper: ScrapperStrategy, scrapping_tool: ScrappingTool, max_allowed_page: int = 100):
+    def __init__(self, base_url: str, repository: Repository, scrapper: ScrapperStrategy, scrapping_tool: ScrappingTool, notification_manager: NotificationManager, max_allowed_page: int = 100):
         self.base_url = base_url
         self.repository = repository
-        self.notification = notification
         self.scrapper = scrapper
         self.scrapping_tool = scrapping_tool
+        self.notification_manager = notification_manager
         self.MAX_PAGE = max_allowed_page
 
     @retry_on_failure(retries=5)
@@ -68,9 +68,9 @@ class WebScrapper:
             scrapped_products = await self.scrape_pages(urls, proxy)
             updated_count = self.repository.save(scrapped_products)
             logger.info(f"Scraping completed. {updated_count} products updated.")
-            self.notification.notify(f"Scraping completed. {updated_count} products updated.")
+            self.notification_manager.notify("scraping", f"Scraping completed. {updated_count} products updated.")
             return {"updated_count": updated_count}
         except Exception as e:
             logger.error(f"Failed to scrape: {str(e)}")
-            self.notification.notify(f"Failed to scrape: {str(e)}")
+            self.notification_manager.notify("scraping", f"Failed to scrape: {str(e)}")
             raise

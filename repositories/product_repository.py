@@ -54,3 +54,24 @@ class ProductRepository(Repository):
         updated_product = self._update_data(existing_data, data)
         self.storage.save(existing_data)
         return updated_product
+    def get_all(self) -> List[Product]:
+        """
+        Retrieves the data from the storage.
+        Returns:
+            List[Product]: The data from the storage.
+        """
+        data = self.storage.get_all()
+        return data
+    
+    def get_product(self, product_id: str) -> dict:
+        """
+        Retrieves the product from the storage.
+        Args:
+            product_id (str): The id of the product to be retrieved.
+        Returns:
+            Product: The product from the storage.
+        """
+        data = self.storage.get()
+        if product_id in data:
+            return data[product_id]
+        return None

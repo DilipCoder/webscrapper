@@ -75,6 +75,8 @@ webscraper/
     uvicorn app:app --reload
     ```
 
+4. Access the Swagger API documentation at [http://localhost:8000/docs](http://localhost:8000/docs).
+
 ## Future Improvements
 
 - **Testing**: Add unit and integration tests to ensure the reliability and correctness of the scraper.
@@ -83,3 +85,4 @@ webscraper/
 ## License
 
 This project is licensed under the MIT License.
+
